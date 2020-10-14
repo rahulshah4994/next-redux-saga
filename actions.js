@@ -1,4 +1,14 @@
 export const actionTypes = {
+
+  LOAD_BLOG_DATA: 'LOAD_BLOG_DATA',
+  FETCH_BLOG_DATA_SAGA: 'FETCH_BLOG_DATA_SAGA',
+  SET_EMAIL: 'SET_EMAIL',
+  SET_PASSWORD: 'SET_PASSWORD',
+  SET_USER_DATA: 'SET_USER_DATA',
+  HYDRATE: 'HYDRATE',
+  ATTEMPT_LOGIN_SAGA: 'ATTEMPT_LOGIN_SAGA',
+
+
   FAILURE: 'FAILURE',
   INCREMENT: 'INCREMENT',
   DECREMENT: 'DECREMENT',
@@ -6,9 +16,30 @@ export const actionTypes = {
   LOAD_DATA: 'LOAD_DATA',
   LOAD_DATA_SUCCESS: 'LOAD_DATA_SUCCESS',
   START_CLOCK: 'START_CLOCK',
-  TICK_CLOCK: 'TICK_CLOCK',
-  HYDRATE: 'HYDRATE',
+  TICK_CLOCK: 'TICK_CLOCK' 
 }
+
+export function setField (field, data) {
+  return {type: `SET_${field.toUpperCase()}`, value: data}
+}
+
+export function fetchBlogData () {
+  return {type: actionTypes.FETCH_BLOG_DATA_SAGA}
+}
+
+export function attemptLogin (email, password) {
+  return {type: actionTypes.ATTEMPT_LOGIN_SAGA, email, password}
+}
+
+export function loadBlogData (blogData) {
+  return { type: actionTypes.LOAD_BLOG_DATA, value: blogData }
+}
+
+export function setUserData (userData) {
+  return { type: actionTypes.SET_USER_DATA, value: userData}
+}
+
+
 
 export function failure(error) {
   return {
@@ -39,6 +70,7 @@ export function loadDataSuccess(data) {
     data,
   }
 }
+
 
 export function startClock() {
   return { type: actionTypes.START_CLOCK }
