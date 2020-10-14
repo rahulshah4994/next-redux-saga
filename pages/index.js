@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchBlogData, setField, setUserData } from '../actions';
 import { attemptLogin } from '../actions';
 import UserHeader from '../components/UserHeader';
-import {LinkedIn } from 'react-linkedin-login-oauth2';
+import {LinkedIn, LinkedInPopUp } from 'react-linkedin-login-oauth2';
 import { useEffect, useState } from 'react';
 const request = require('superagent');
 
@@ -42,11 +42,11 @@ export default function Login () {
         dispatch(attemptLogin(email, password));
     }
 
-    const handleSuccess = async (data) => {
+    async function handleSuccess (data) {
         console.log(data);
         setCode(data.code);
-        console.log("LinkedIn AccessToken sending")
-        requestAccessToken(code,data.state)
+        console.log("Auth Code: ", code, "LinkedIn AccessToken sending")
+        await requestAccessToken(code,data.state)
         .then((response) => {
             requestProfile(response.body.access_token)
             .then(response => {
@@ -60,14 +60,14 @@ export default function Login () {
         console.log("LinkedIn AccessToken request complete")
       }
 
-      function requestAccessToken(code,state) {
+      function requestAccessToken(code) {
+          console.log("Code: ",code)
         return request.post('https://www.linkedin.com/oauth/v2/accessToken')
           .send('grant_type=authorization_code')
-          .send(`redirect_uri=http://localhost:3000/dashboard`)
+          .send(`redirect_uri=http://localhost:3000/`)
           .send(`client_id=78jkfe35r5evxc`)
           .send(`client_secret=we67HuHoHLUDLzxG`)
           .send(`code=${code}`)
-          .send(`state=${state}`)
       }
 
       function requestProfile(token) {
@@ -114,10 +114,12 @@ export default function Login () {
                                 clientId="78jkfe35r5evxc"
                                 onFailure={handleFailure}
                                 onSuccess={handleSuccess}
-                                redirectUri="http://localhost:3000/dashboard"
+                                redirectUri="http://localhost:3000/"
+                                state="123456"
                             >
                                     LinkedIn
                             </LinkedIn>
+                            <LinkedInPopUp />
                         </Form>
                         {!code && <div>No code</div>}
                         {code && <div>Code: {code}</div>}
