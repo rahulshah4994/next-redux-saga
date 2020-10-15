@@ -7,7 +7,9 @@ import { attemptLogin } from '../actions';
 import UserHeader from '../components/UserHeader';
 import {LinkedIn, LinkedInPopUp } from 'react-linkedin-login-oauth2';
 import { useEffect, useState } from 'react';
+import SocialButton from '../components/ReactSocialLogin';
 const request = require('superagent');
+import Head from 'next/head';
 
 
 export default function Login () {
@@ -45,50 +47,81 @@ export default function Login () {
     async function handleSuccess (data) {
         console.log(data);
         setCode(data.code);
-        console.log("Auth Code: ", code, "LinkedIn AccessToken sending")
-        await requestAccessToken(code,data.state)
-        .then((response) => {
-            requestProfile(response.body.access_token)
-            .then(response => {
-                console.log(response.body)
-            // res.render('callback', { profile: response.body});
-            })
-        })
-        .catch((error) => {
-            console.error(error)
-        })
+        console.log("Auth Code: ", data.code, "LinkedIn AccessToken sending")
+        // await requestAccessToken(data.code)
+        // .then((response) => {
+        //     requestProfile(response.body.access_token)
+        //     .then(response => {
+        //         console.log(response.body)
+        //     // res.render('callback', { profile: response.body});
+        //     })
+        // })
+        // .catch((error) => {
+        //     console.error(error)
+        // })
         console.log("LinkedIn AccessToken request complete")
       }
 
-      function requestAccessToken(code) {
-          console.log("Code: ",code)
-        return request.post('https://www.linkedin.com/oauth/v2/accessToken')
-          .send('grant_type=authorization_code')
-          .send(`redirect_uri=http://localhost:3000/`)
-          .send(`client_id=78jkfe35r5evxc`)
-          .send(`client_secret=we67HuHoHLUDLzxG`)
-          .send(`code=${code}`)
-      }
+    //   function requestAccessToken(code) {
+    //       console.log("Code: ",code)
+    //     return request.post('https://www.linkedin.com/oauth/v2/accessToken')
+    //       .send('grant_type=authorization_code')
+    //       .send(`redirect_uri=http://localhost:3000/dashboard`)
+    //       .send(`client_id=78jkfe35r5evxc`)
+    //       .send(`client_secret=we67HuHoHLUDLzxG`)
+    //       .send(`code=${code}`)
+    //   }
 
-      function requestProfile(token) {
-        return request.get('https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~digitalmediaAsset:playableStreams))')
-        .set('Authorization', `Bearer ${token}`)
-      }
+    //   function requestProfile(token) {
+    //     console.log(token)
+    //     return request.get('https://api.linkedin.com/v2/me')
+    //     .set('Authorization', `Bearer ${token}`)
+    //   }
 
     const handleFailure = (error) => {
         setErrorMessage(error.errorMessage)
-      }
+    }
 
+    const handleSocialLogin = (user) => {
+    console.log(user)
+    }
+    
+    const handleSocialLoginFailure = (err) => {
+    console.error(err)
+    }
+
+    useEffect(()=> {
+        let el = document.createElement("script");
+        el.src = "https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd970IOItyzs_2FKSx4sdiOlpAfyp8VeOKogSqhUDrhGzOU.js";
+        document.body.appendChild(el)
+    }, [])
+
+    // function surveymonkey(t,e,s,n){
+    //     var o,a,c;
+    //     t.SMCX=t.SMCX||[],e.getElementById(n)||(o=e.getElementsByTagName(s),a=o[o.length-1],c=e.createElement(s),c.type="text/javascript",c.async=!0,c.id=n,c.src="https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd970IOItyzs_2FKSx4sdiOlpAfyp8VeOKogSqhUDrhGzOU.js",a.parentNode.insertBefore(c,a))
+    // }
+
+    // surveymonkey(window,document,"script","smcx-sdk");
 
     console.log("userData: ", userData)
     return (
         <div>
+            <div id="smcx-sdk">
+            </div>
         <Container>
             {(userData.auth_token) && <UserHeader />}
             <Row style={{height: '100px'}} />
             <Row>
                 <Col md={{size: 6, offset: 3}}>
                     <Card style={{boxShadow: '5px 10px 10px #c5c5c5', padding: '20px', borderRadius: '10px'}}>
+                    <SocialButton
+                        provider='linkedin'
+                        appId='78jkfe35r5evxc'
+                        onLoginSuccess={handleSocialLogin}
+                        onLoginFailure={handleSocialLoginFailure}
+                    >
+                    Login with LinkedIn
+                    </SocialButton>
                         <Form onSubmit = {Login}>
                             <h1 style={{textAlign: 'center'}}>Login</h1>
                             <hr />
@@ -114,8 +147,7 @@ export default function Login () {
                                 clientId="78jkfe35r5evxc"
                                 onFailure={handleFailure}
                                 onSuccess={handleSuccess}
-                                redirectUri="http://localhost:3000/"
-                                state="123456"
+                                redirectUri="http://localhost:3000/dashboard"
                             >
                                     LinkedIn
                             </LinkedIn>

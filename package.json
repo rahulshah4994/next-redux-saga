@@ -19,6 +19,7 @@
     "react-google-login": "^5.1.21",
     "react-linkedin-login-oauth2": "^1.0.8",
     "react-redux": "7.2.0",
+    "react-social-login": "^3.4.10",
     "react-typeform-embed": "^0.2.1",
     "reactstrap": "^8.6.0",
     "redux": "4.0.5",
